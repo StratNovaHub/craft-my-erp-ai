@@ -12,8 +12,32 @@ import {
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case "Add Customer":
+        navigate("/crm");
+        toast.success("Opening CRM module");
+        break;
+      case "New Product":
+        navigate("/erp");
+        toast.success("Opening ERP module");
+        break;
+      case "Create Report":
+        toast.success("Report generation started");
+        break;
+      case "Risk Assessment":
+        navigate("/erm");
+        toast.success("Opening ERM module");
+        break;
+    }
+  };
+
   return (
     <Layout>
       <div className="space-y-6 animate-fade-in">
@@ -121,6 +145,7 @@ const Dashboard = () => {
                 key={action.label}
                 variant="outline"
                 className="h-20 flex-col gap-2 hover:bg-primary/10 hover:border-primary/50 transition-all"
+                onClick={() => handleQuickAction(action.label)}
               >
                 <action.icon className="w-5 h-5" />
                 <span className="text-sm">{action.label}</span>
