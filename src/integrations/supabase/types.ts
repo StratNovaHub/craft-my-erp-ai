@@ -14,7 +14,458 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      compliance_records: {
+        Row: {
+          compliance_date: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          next_review_date: string | null
+          regulation: string | null
+          responsible_party: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          compliance_date?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          next_review_date?: string | null
+          regulation?: string | null
+          responsible_party?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          compliance_date?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          next_review_date?: string | null
+          regulation?: string | null
+          responsible_party?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          position: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          position?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          position?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      customers: {
+        Row: {
+          company: string | null
+          created_at: string | null
+          email: string | null
+          id: string
+          location: string | null
+          name: string
+          phone: string | null
+          status: Database["public"]["Enums"]["customer_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          location?: string | null
+          name: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["customer_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          company?: string | null
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          location?: string | null
+          name?: string
+          phone?: string | null
+          status?: Database["public"]["Enums"]["customer_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      deals: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          expected_close_date: string | null
+          id: string
+          status: Database["public"]["Enums"]["deal_status"] | null
+          title: string
+          updated_at: string | null
+          value: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          expected_close_date?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["deal_status"] | null
+          title: string
+          updated_at?: string | null
+          value?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          expected_close_date?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["deal_status"] | null
+          title?: string
+          updated_at?: string | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deals_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incidents: {
+        Row: {
+          assigned_to: string | null
+          category: Database["public"]["Enums"]["risk_category"]
+          created_at: string | null
+          description: string | null
+          id: string
+          reported_date: string | null
+          resolved_date: string | null
+          severity: Database["public"]["Enums"]["risk_severity"]
+          status: string | null
+          title: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          category: Database["public"]["Enums"]["risk_category"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reported_date?: string | null
+          resolved_date?: string | null
+          severity: Database["public"]["Enums"]["risk_severity"]
+          status?: string | null
+          title: string
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: Database["public"]["Enums"]["risk_category"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          reported_date?: string | null
+          resolved_date?: string | null
+          severity?: Database["public"]["Enums"]["risk_severity"]
+          status?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      inventory_batches: {
+        Row: {
+          batch_number: string
+          created_at: string | null
+          expiry_date: string | null
+          id: string
+          product_id: string | null
+          quantity: number
+          received_date: string
+          supplier: string | null
+        }
+        Insert: {
+          batch_number: string
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          product_id?: string | null
+          quantity: number
+          received_date: string
+          supplier?: string | null
+        }
+        Update: {
+          batch_number?: string
+          created_at?: string | null
+          expiry_date?: string | null
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          received_date?: string
+          supplier?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_batches_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string | null
+          product_id: string | null
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Insert: {
+          id?: string
+          order_id?: string | null
+          product_id?: string | null
+          quantity: number
+          total_price: number
+          unit_price: number
+        }
+        Update: {
+          id?: string
+          order_id?: string | null
+          product_id?: string | null
+          quantity?: number
+          total_price?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          delivery_date: string | null
+          id: string
+          notes: string | null
+          order_date: string | null
+          order_number: string
+          status: Database["public"]["Enums"]["order_status"] | null
+          total_amount: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          delivery_date?: string | null
+          id?: string
+          notes?: string | null
+          order_date?: string | null
+          order_number: string
+          status?: Database["public"]["Enums"]["order_status"] | null
+          total_amount: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          delivery_date?: string | null
+          id?: string
+          notes?: string | null
+          order_date?: string | null
+          order_number?: string
+          status?: Database["public"]["Enums"]["order_status"] | null
+          total_amount?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          price: number
+          sku: string
+          stock_quantity: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          price: number
+          sku: string
+          stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          price?: number
+          sku?: string
+          stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      risk_assessments: {
+        Row: {
+          assessed_date: string | null
+          category: Database["public"]["Enums"]["risk_category"]
+          created_at: string | null
+          description: string | null
+          id: string
+          impact_score: number | null
+          mitigation_plan: string | null
+          probability: number | null
+          severity: Database["public"]["Enums"]["risk_severity"]
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          assessed_date?: string | null
+          category: Database["public"]["Enums"]["risk_category"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          impact_score?: number | null
+          mitigation_plan?: string | null
+          probability?: number | null
+          severity: Database["public"]["Enums"]["risk_severity"]
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          assessed_date?: string | null
+          category?: Database["public"]["Enums"]["risk_category"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          impact_score?: number | null
+          mitigation_plan?: string | null
+          probability?: number | null
+          severity?: Database["public"]["Enums"]["risk_severity"]
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      sales_logs: {
+        Row: {
+          created_at: string | null
+          customer_id: string | null
+          id: string
+          product_id: string | null
+          quantity: number
+          sale_date: string | null
+          sale_price: number
+          total_amount: number
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          product_id?: string | null
+          quantity: number
+          sale_date?: string | null
+          sale_price: number
+          total_amount: number
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string | null
+          id?: string
+          product_id?: string | null
+          quantity?: number
+          sale_date?: string | null
+          sale_price?: number
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_logs_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sales_logs_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +474,27 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      customer_status: "active" | "inactive" | "prospect" | "churned"
+      deal_status:
+        | "lead"
+        | "qualified"
+        | "proposal"
+        | "negotiation"
+        | "closed_won"
+        | "closed_lost"
+      order_status:
+        | "pending"
+        | "processing"
+        | "shipped"
+        | "delivered"
+        | "cancelled"
+      risk_category:
+        | "operational"
+        | "financial"
+        | "strategic"
+        | "compliance"
+        | "reputational"
+      risk_severity: "low" | "medium" | "high" | "critical"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +621,31 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      customer_status: ["active", "inactive", "prospect", "churned"],
+      deal_status: [
+        "lead",
+        "qualified",
+        "proposal",
+        "negotiation",
+        "closed_won",
+        "closed_lost",
+      ],
+      order_status: [
+        "pending",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ],
+      risk_category: [
+        "operational",
+        "financial",
+        "strategic",
+        "compliance",
+        "reputational",
+      ],
+      risk_severity: ["low", "medium", "high", "critical"],
+    },
   },
 } as const
