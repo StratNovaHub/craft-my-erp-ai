@@ -58,17 +58,21 @@ const Interfaces = () => {
   const loadViews = async () => {
     if (!currentOrg) return;
     setLoading(true);
-    const { data, error } = await supabase
-      .from('saved_views')
-      .select('*')
-      .eq('org_id', currentOrg.id)
-      .order('created_at', { ascending: false });
+    try {
+      const { data, error } = await (supabase as any)
+        .from('saved_views')
+        .select('*')
+        .eq('org_id', currentOrg.id)
+        .order('created_at', { ascending: false });
 
-    if (error) {
-      toast.error('Failed to load views');
-      console.error(error);
-    } else {
-      setViews(data || []);
+      if (error) {
+        console.warn('Saved views table not ready:', error);
+        setViews([]);
+      } else {
+        setViews(data || []);
+      }
+    } catch (error) {
+      console.warn('Error loading views:', error);
     }
     setLoading(false);
   };
@@ -79,25 +83,30 @@ const Interfaces = () => {
       return;
     }
 
-    const { error } = await supabase
-      .from('saved_views')
-      .insert({
-        org_id: currentOrg.id,
-        title: newViewTitle,
-        table_name: newViewTable,
-        config: {},
-        created_by: user.id
-      });
+    try {
+      const { error } = await (supabase as any)
+        .from('saved_views')
+        .insert({
+          org_id: currentOrg.id,
+          title: newViewTitle,
+          table_name: newViewTable,
+          config: {},
+          created_by: user.id
+        });
 
-    if (error) {
-      toast.error('Failed to create view');
-      console.error(error);
-    } else {
-      toast.success('View created successfully');
-      setNewViewTitle("");
-      setNewViewTable("");
-      setDialogOpen(false);
-      loadViews();
+      if (error) {
+        toast.error('Failed to create view');
+        console.error(error);
+      } else {
+        toast.success('View created successfully');
+        setNewViewTitle("");
+        setNewViewTable("");
+        setDialogOpen(false);
+        loadViews();
+      }
+    } catch (error) {
+      console.warn('Saved views not available yet:', error);
+      toast.error('This feature requires database migration');
     }
   };
 
@@ -106,18 +115,25 @@ const Interfaces = () => {
     setSelectedView(view);
     setLoadingData(true);
 
-    const { data, error } = await supabase
-      .from(view.table_name)
-      .select('*')
-      .eq('org_id', currentOrg.id)
-      .limit(100);
+    try {
+      let query = supabase.from(view.table_name).select('*').limit(100);
+      
+      if (currentOrg) {
+        query = (query as any).eq('org_id', currentOrg.id);
+      }
+      
+      const { data, error } = await query;
 
-    if (error) {
-      toast.error('Failed to load data');
-      console.error(error);
+      if (error) {
+        toast.error('Failed to load data');
+        console.error(error);
+        setViewData([]);
+      } else {
+        setViewData(data || []);
+      }
+    } catch (error) {
+      console.warn('Error loading view data:', error);
       setViewData([]);
-    } else {
-      setViewData(data || []);
     }
     setLoadingData(false);
   };

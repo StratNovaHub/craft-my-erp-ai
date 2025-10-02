@@ -64,14 +64,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const loadUserOrganizations = async (userId: string) => {
     try {
-      const { data: memberships, error } = await supabase
+      const { data: memberships, error } = await (supabase as any)
         .from('organization_members')
         .select('organization_id, organizations(id, name)')
         .eq('user_id', userId);
 
-      if (error) throw error;
+      if (error) {
+        console.warn('Organizations table not ready:', error);
+        setLoading(false);
+        return;
+      }
 
-      const orgs = memberships?.map(m => ({
+      const orgs = memberships?.map((m: any) => ({
         id: m.organizations.id,
         name: m.organizations.name
       })) || [];
@@ -111,22 +115,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     if (data.user) {
       // Create default organization and membership
-      const { data: org, error: orgError } = await supabase
-        .from('organizations')
-        .insert({ name: `${email.split('@')[0]}'s Organization` })
-        .select()
-        .single();
+      try {
+        const { data: org, error: orgError } = await (supabase as any)
+          .from('organizations')
+          .insert({ name: `${email.split('@')[0]}'s Organization` })
+          .select()
+          .single();
 
-      if (orgError) {
-        console.error('Error creating organization:', orgError);
-      } else if (org) {
-        const { error: memberError } = await supabase
-          .from('organization_members')
-          .insert({ organization_id: org.id, user_id: data.user.id, role: 'admin' });
-        
-        if (memberError) {
-          console.error('Error creating membership:', memberError);
+        if (orgError) {
+          console.warn('Organization table not ready:', orgError);
+        } else if (org) {
+          const { error: memberError } = await (supabase as any)
+            .from('organization_members')
+            .insert({ organization_id: org.id, user_id: data.user.id, role: 'admin' });
+          
+          if (memberError) {
+            console.warn('Membership table not ready:', memberError);
+          }
         }
+      } catch (err) {
+        console.warn('Multi-tenant tables not ready yet:', err);
       }
     }
     

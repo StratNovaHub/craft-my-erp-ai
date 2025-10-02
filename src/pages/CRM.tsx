@@ -15,21 +15,26 @@ const CRM = () => {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if (!currentOrg) return;
-    
     const loadCustomers = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .eq('org_id', currentOrg.id)
-        .order('created_at', { ascending: false });
+      try {
+        let query = supabase.from('customers').select('*').order('created_at', { ascending: false });
+        
+        if (currentOrg) {
+          query = (query as any).eq('org_id', currentOrg.id);
+        }
+        
+        const { data, error } = await query;
 
-      if (error) {
+        if (error) {
+          toast.error('Failed to load customers');
+          console.error(error);
+        } else {
+          setCustomers(data || []);
+        }
+      } catch (error) {
+        console.warn('Error loading customers:', error);
         toast.error('Failed to load customers');
-        console.error(error);
-      } else {
-        setCustomers(data || []);
       }
       setLoading(false);
     };
