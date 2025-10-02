@@ -4,29 +4,58 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sparkles, Send, Database, Users, Package, Shield, FileText, BarChart } from "lucide-react";
+import { Sparkles, Send, Database, Users, Package, Shield, FileText, BarChart, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const AIBuilder = () => {
+  const { currentOrg } = useAuth();
   const [prompt, setPrompt] = useState("");
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([
     { role: "assistant", content: "Hello! I'm your Data Management AI. Tell me what record you need to create, update, or where you need to allocate data, and I'll handle it across your ERP, CRM, and ERM systems." }
   ]);
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
-    if (!prompt.trim()) return;
+  const handleSend = async () => {
+    if (!prompt.trim() || !currentOrg) return;
 
-    setMessages([...messages, { role: "user", content: prompt }]);
+    const userMessage = prompt;
+    setMessages([...messages, { role: "user", content: userMessage }]);
     setPrompt("");
+    setLoading(true);
 
-    // Simulate AI response
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke('ai-command', {
+        body: { command: userMessage, orgId: currentOrg.id }
+      });
+
+      if (error) throw error;
+
+      const response = data.success 
+        ? `✅ ${data.message}\n\nDetails: ${JSON.stringify(data.parsed, null, 2)}`
+        : `❌ Error: ${data.error}`;
+
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "I'm analyzing your request and routing the data to the appropriate modules. I'll update all relevant records and confirm once complete."
+        content: response
       }]);
-      toast.success("Processing data allocation...");
-    }, 1000);
+
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error('Command failed');
+      }
+    } catch (error: any) {
+      console.error('AI command error:', error);
+      setMessages(prev => [...prev, {
+        role: "assistant",
+        content: `❌ Error: ${error.message || 'Failed to process command'}`
+      }]);
+      toast.error('Failed to process command');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const suggestions = [
@@ -87,10 +116,11 @@ const AIBuilder = () => {
               />
               <Button 
                 onClick={handleSend}
+                disabled={loading}
                 className="bg-gradient-to-r from-primary to-accent"
                 size="icon"
               >
-                <Send className="w-4 h-4" />
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
               </Button>
             </div>
           </Card>

@@ -3,11 +3,15 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import Index from "./pages/Index";
+import Auth from "./pages/Auth";
 import CRM from "./pages/CRM";
 import ERP from "./pages/ERP";
 import ERM from "./pages/ERM";
 import AIBuilder from "./pages/AIBuilder";
+import Interfaces from "./pages/Interfaces";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,15 +22,18 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/crm" element={<CRM />} />
-          <Route path="/erp" element={<ERP />} />
-          <Route path="/erm" element={<ERM />} />
-          <Route path="/ai-builder" element={<AIBuilder />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+            <Route path="/crm" element={<ProtectedRoute><CRM /></ProtectedRoute>} />
+            <Route path="/erp" element={<ProtectedRoute><ERP /></ProtectedRoute>} />
+            <Route path="/erm" element={<ProtectedRoute><ERM /></ProtectedRoute>} />
+            <Route path="/ai-builder" element={<ProtectedRoute><AIBuilder /></ProtectedRoute>} />
+            <Route path="/interfaces" element={<ProtectedRoute><Interfaces /></ProtectedRoute>} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

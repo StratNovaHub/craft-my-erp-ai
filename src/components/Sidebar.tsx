@@ -7,10 +7,14 @@ import {
   Shield, 
   Sparkles, 
   ChevronLeft,
-  ChevronRight 
+  ChevronRight,
+  Layers,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { OrgSwitcher } from "./OrgSwitcher";
+import { useAuth } from "@/contexts/AuthContext";
 
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
@@ -18,11 +22,13 @@ const menuItems = [
   { icon: Package, label: "ERP", path: "/erp" },
   { icon: Shield, label: "ERM", path: "/erm" },
   { icon: Sparkles, label: "AI Builder", path: "/ai-builder" },
+  { icon: Layers, label: "Interfaces", path: "/interfaces" },
 ];
 
 export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { signOut } = useAuth();
 
   return (
     <aside 
@@ -69,8 +75,21 @@ export const Sidebar = () => {
           })}
         </nav>
 
-        {/* Collapse Toggle */}
-        <div className="p-4 border-t border-border/50">
+        {/* Org Switcher */}
+        {!collapsed && <OrgSwitcher />}
+
+        {/* Collapse Toggle & Sign Out */}
+        <div className="p-4 border-t border-border/50 space-y-2">
+          {!collapsed && (
+            <Button
+              variant="ghost"
+              onClick={signOut}
+              className="w-full justify-start gap-3"
+            >
+              <LogOut className="w-5 h-5" />
+              <span>Sign Out</span>
+            </Button>
+          )}
           <Button
             variant="ghost"
             size="icon"

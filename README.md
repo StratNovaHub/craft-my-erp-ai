@@ -1,73 +1,74 @@
-# Welcome to your Lovable project
+# BuilderAI - Enterprise ERP-CRM-ERM Suite
 
-## Project info
+A secure, multi-tenant enterprise management system with AI-powered data operations.
 
-**URL**: https://lovable.dev/projects/cb2c2f30-a4ef-4c9a-998d-030c0b0c8d46
+## Features
 
-## How can I edit this code?
+- **Multi-tenant Architecture**: Secure organization-based data isolation
+- **CRM**: Customer relationship management
+- **ERP**: Enterprise resource planning (products, inventory, orders)
+- **ERM**: Enterprise risk management (risks, incidents, compliance)
+- **AI Data Manager**: Natural language data operations via AI
+- **Saved Interfaces**: Create custom data views with export capabilities
+- **Authentication**: Secure email/password auth with Supabase
 
-There are several ways of editing your application.
+## Setup
 
-**Use Lovable**
+1. **Clone and Install**
+   ```bash
+   npm install
+   ```
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/cb2c2f30-a4ef-4c9a-998d-030c0b0c8d46) and start prompting.
+2. **Environment Configuration**
+   - Copy `.env.example` to `.env`
+   - Add your Supabase credentials from your Supabase project
 
-Changes made via Lovable will be committed automatically to this repo.
+3. **Database Migration**
+   - The SQL migration has been provided for multi-tenant setup
+   - Run it in your Supabase SQL editor to create all necessary tables
 
-**Use your preferred IDE**
+4. **Start Development**
+   ```bash
+   npm run dev
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Architecture
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Database Schema
+- **organizations**: Company/tenant records
+- **organization_members**: User-organization relationships
+- **profiles**: User profile data
+- **saved_views**: Custom data interface configurations
+- **customers, contacts, deals**: CRM module tables
+- **products, inventory_batches, sales_logs, orders, order_items**: ERP module tables
+- **risk_assessments, incidents, compliance_records**: ERM module tables
 
-Follow these steps:
+### Security
+- Row-Level Security (RLS) enforces org-level data isolation
+- All queries automatically scoped to user's current organization
+- Server-side validation via Supabase edge functions
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### AI Integration
+- Uses Lovable AI Gateway (Google Gemini 2.5 Flash)
+- Natural language commands parsed to database operations
+- Automatic org_id injection for security
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## Usage
 
-# Step 3: Install the necessary dependencies.
-npm i
+1. **Sign Up/Sign In**: Create an account at `/auth`
+2. **Switch Organizations**: Use org switcher in sidebar (if member of multiple orgs)
+3. **AI Commands**: Use natural language in AI Builder
+   - Example: "Create a customer named John Doe with email john@example.com"
+   - Example: "Add a product called Widget with SKU WID-001 and price 99.99"
+4. **Saved Interfaces**: Create custom views of any table with filters and export to CSV
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+## Tech Stack
 
-**Edit a file directly in GitHub**
+- **Frontend**: React, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend**: Supabase (PostgreSQL, Auth, Edge Functions)
+- **AI**: Lovable AI Gateway (Gemini 2.5 Flash)
+- **Deployment**: Lovable Platform
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## License
 
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/cb2c2f30-a4ef-4c9a-998d-030c0b0c8d46) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT
