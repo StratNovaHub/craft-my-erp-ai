@@ -47,7 +47,7 @@ const Auth = () => {
           <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-accent flex items-center justify-center glow-effect mb-4">
             <Sparkles className="w-8 h-8 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-bold gradient-text">BuilderAI</h1>
+          <h1 className="text-3xl font-bold gradient-text">StratNova Hub</h1>
           <p className="text-muted-foreground mt-2">Enterprise Suite</p>
         </div>
 

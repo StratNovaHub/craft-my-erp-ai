@@ -1,4 +1,4 @@
-# BuilderAI - Enterprise ERP-CRM-ERM Suite
+# StratNova Hub - Enterprise ERP-CRM-ERM Suite
 
 A secure, multi-tenant enterprise management system with AI-powered data operations.
 

@@ -46,7 +46,7 @@ export const Sidebar = () => {
             </div>
             {!collapsed && (
               <div className="flex flex-col">
-                <h1 className="text-lg font-bold gradient-text">BuilderAI</h1>
+                <h1 className="text-lg font-bold gradient-text">StratNova Hub</h1>
                 <p className="text-xs text-muted-foreground">Enterprise Suite</p>
               </div>
             )}
