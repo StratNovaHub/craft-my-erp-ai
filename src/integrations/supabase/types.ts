@@ -21,6 +21,7 @@ export type Database = {
           description: string | null
           id: string
           next_review_date: string | null
+          org_id: string
           regulation: string | null
           responsible_party: string | null
           status: string | null
@@ -33,6 +34,7 @@ export type Database = {
           description?: string | null
           id?: string
           next_review_date?: string | null
+          org_id: string
           regulation?: string | null
           responsible_party?: string | null
           status?: string | null
@@ -45,6 +47,7 @@ export type Database = {
           description?: string | null
           id?: string
           next_review_date?: string | null
+          org_id?: string
           regulation?: string | null
           responsible_party?: string | null
           status?: string | null
@@ -60,8 +63,10 @@ export type Database = {
           email: string | null
           id: string
           name: string
+          org_id: string
           phone: string | null
           position: string | null
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
@@ -69,8 +74,10 @@ export type Database = {
           email?: string | null
           id?: string
           name: string
+          org_id: string
           phone?: string | null
           position?: string | null
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
@@ -78,8 +85,10 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string
+          org_id?: string
           phone?: string | null
           position?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -99,6 +108,7 @@ export type Database = {
           id: string
           location: string | null
           name: string
+          org_id: string
           phone: string | null
           status: Database["public"]["Enums"]["customer_status"] | null
           updated_at: string | null
@@ -110,6 +120,7 @@ export type Database = {
           id?: string
           location?: string | null
           name: string
+          org_id: string
           phone?: string | null
           status?: Database["public"]["Enums"]["customer_status"] | null
           updated_at?: string | null
@@ -121,6 +132,7 @@ export type Database = {
           id?: string
           location?: string | null
           name?: string
+          org_id?: string
           phone?: string | null
           status?: Database["public"]["Enums"]["customer_status"] | null
           updated_at?: string | null
@@ -133,6 +145,7 @@ export type Database = {
           customer_id: string | null
           expected_close_date: string | null
           id: string
+          org_id: string
           status: Database["public"]["Enums"]["deal_status"] | null
           title: string
           updated_at: string | null
@@ -143,6 +156,7 @@ export type Database = {
           customer_id?: string | null
           expected_close_date?: string | null
           id?: string
+          org_id: string
           status?: Database["public"]["Enums"]["deal_status"] | null
           title: string
           updated_at?: string | null
@@ -153,6 +167,7 @@ export type Database = {
           customer_id?: string | null
           expected_close_date?: string | null
           id?: string
+          org_id?: string
           status?: Database["public"]["Enums"]["deal_status"] | null
           title?: string
           updated_at?: string | null
@@ -168,6 +183,24 @@ export type Database = {
           },
         ]
       }
+      edge_function_meta: {
+        Row: {
+          id: number
+          name: string | null
+          note: string | null
+        }
+        Insert: {
+          id?: number
+          name?: string | null
+          note?: string | null
+        }
+        Update: {
+          id?: number
+          name?: string | null
+          note?: string | null
+        }
+        Relationships: []
+      }
       incidents: {
         Row: {
           assigned_to: string | null
@@ -175,11 +208,13 @@ export type Database = {
           created_at: string | null
           description: string | null
           id: string
+          org_id: string
           reported_date: string | null
           resolved_date: string | null
           severity: Database["public"]["Enums"]["risk_severity"]
           status: string | null
           title: string
+          updated_at: string | null
         }
         Insert: {
           assigned_to?: string | null
@@ -187,11 +222,13 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          org_id: string
           reported_date?: string | null
           resolved_date?: string | null
           severity: Database["public"]["Enums"]["risk_severity"]
           status?: string | null
           title: string
+          updated_at?: string | null
         }
         Update: {
           assigned_to?: string | null
@@ -199,11 +236,13 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           id?: string
+          org_id?: string
           reported_date?: string | null
           resolved_date?: string | null
           severity?: Database["public"]["Enums"]["risk_severity"]
           status?: string | null
           title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -213,30 +252,36 @@ export type Database = {
           created_at: string | null
           expiry_date: string | null
           id: string
+          org_id: string
           product_id: string | null
           quantity: number
           received_date: string
           supplier: string | null
+          updated_at: string | null
         }
         Insert: {
           batch_number: string
           created_at?: string | null
           expiry_date?: string | null
           id?: string
+          org_id: string
           product_id?: string | null
           quantity: number
           received_date: string
           supplier?: string | null
+          updated_at?: string | null
         }
         Update: {
           batch_number?: string
           created_at?: string | null
           expiry_date?: string | null
           id?: string
+          org_id?: string
           product_id?: string | null
           quantity?: number
           received_date?: string
           supplier?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -248,30 +293,74 @@ export type Database = {
           },
         ]
       }
+      join_requests: {
+        Row: {
+          id: string
+          org_id: string
+          processed_at: string | null
+          processed_by: string | null
+          requested_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          requested_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "join_requests_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       order_items: {
         Row: {
           id: string
           order_id: string | null
+          org_id: string
           product_id: string | null
           quantity: number
           total_price: number
           unit_price: number
+          updated_at: string | null
         }
         Insert: {
           id?: string
           order_id?: string | null
+          org_id: string
           product_id?: string | null
           quantity: number
           total_price: number
           unit_price: number
+          updated_at?: string | null
         }
         Update: {
           id?: string
           order_id?: string | null
+          org_id?: string
           product_id?: string | null
           quantity?: number
           total_price?: number
           unit_price?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -299,6 +388,7 @@ export type Database = {
           notes: string | null
           order_date: string | null
           order_number: string
+          org_id: string
           status: Database["public"]["Enums"]["order_status"] | null
           total_amount: number
           updated_at: string | null
@@ -311,6 +401,7 @@ export type Database = {
           notes?: string | null
           order_date?: string | null
           order_number: string
+          org_id: string
           status?: Database["public"]["Enums"]["order_status"] | null
           total_amount: number
           updated_at?: string | null
@@ -323,6 +414,7 @@ export type Database = {
           notes?: string | null
           order_date?: string | null
           order_number?: string
+          org_id?: string
           status?: Database["public"]["Enums"]["order_status"] | null
           total_amount?: number
           updated_at?: string | null
@@ -337,6 +429,47 @@ export type Database = {
           },
         ]
       }
+      organization_members: {
+        Row: {
+          org_id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          org_id: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          org_id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          id: string
+          name: string | null
+        }
+        Insert: {
+          id?: string
+          name?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string | null
@@ -344,6 +477,7 @@ export type Database = {
           description: string | null
           id: string
           name: string
+          org_id: string
           price: number
           sku: string
           stock_quantity: number | null
@@ -355,6 +489,7 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
+          org_id: string
           price: number
           sku: string
           stock_quantity?: number | null
@@ -366,12 +501,57 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
+          org_id?: string
           price?: number
           sku?: string
           stock_quantity?: number | null
           updated_at?: string | null
         }
         Relationships: []
+      }
+      resource_permissions: {
+        Row: {
+          can_read: boolean
+          granted_at: string
+          granted_by: string | null
+          id: string
+          member_user_id: string
+          org_id: string
+          resource_key: string
+          resource_type: string
+          updated_at: string
+        }
+        Insert: {
+          can_read?: boolean
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          member_user_id: string
+          org_id: string
+          resource_key: string
+          resource_type: string
+          updated_at?: string
+        }
+        Update: {
+          can_read?: boolean
+          granted_at?: string
+          granted_by?: string | null
+          id?: string
+          member_user_id?: string
+          org_id?: string
+          resource_key?: string
+          resource_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_permissions_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       risk_assessments: {
         Row: {
@@ -382,6 +562,7 @@ export type Database = {
           id: string
           impact_score: number | null
           mitigation_plan: string | null
+          org_id: string
           probability: number | null
           severity: Database["public"]["Enums"]["risk_severity"]
           status: string | null
@@ -396,6 +577,7 @@ export type Database = {
           id?: string
           impact_score?: number | null
           mitigation_plan?: string | null
+          org_id: string
           probability?: number | null
           severity: Database["public"]["Enums"]["risk_severity"]
           status?: string | null
@@ -410,6 +592,7 @@ export type Database = {
           id?: string
           impact_score?: number | null
           mitigation_plan?: string | null
+          org_id?: string
           probability?: number | null
           severity?: Database["public"]["Enums"]["risk_severity"]
           status?: string | null
@@ -423,31 +606,37 @@ export type Database = {
           created_at: string | null
           customer_id: string | null
           id: string
+          org_id: string
           product_id: string | null
           quantity: number
           sale_date: string | null
           sale_price: number
           total_amount: number
+          updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           customer_id?: string | null
           id?: string
+          org_id: string
           product_id?: string | null
           quantity: number
           sale_date?: string | null
           sale_price: number
           total_amount: number
+          updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           customer_id?: string | null
           id?: string
+          org_id?: string
           product_id?: string | null
           quantity?: number
           sale_date?: string | null
           sale_price?: number
           total_amount?: number
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -466,12 +655,90 @@ export type Database = {
           },
         ]
       }
+      saved_views: {
+        Row: {
+          config: Json
+          created_at: string | null
+          created_by: string | null
+          id: string
+          org_id: string
+          table_name: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          org_id: string
+          table_name: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          org_id?: string
+          table_name?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_views_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_org_with_member: {
+        Args: { p_name: string; p_org_id: string; p_user_id: string }
+        Returns: {
+          member_role: string
+          member_user_id: string
+          org_id: string
+          org_name: string
+        }[]
+      }
+      create_org_with_member_v2: {
+        Args: { p_name: string; p_org_id: string; p_user_id: string }
+        Returns: undefined
+      }
+      sim_insert_customer: {
+        Args: { p_id: string; p_org_id: string; p_user_id: string }
+        Returns: {
+          id: string
+          ok: boolean
+        }[]
+      }
+      sim_select_customers: {
+        Args: { p_org_id: string; p_user_id: string }
+        Returns: {
+          id: string
+          org_id: string
+        }[]
+      }
+      sim_select_organizations: {
+        Args: { p_user_id: string }
+        Returns: {
+          id: string
+          name: string
+        }[]
+      }
+      sim_user_is_member: {
+        Args: { p_org_id: string; p_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       customer_status: "active" | "inactive" | "prospect" | "churned"
