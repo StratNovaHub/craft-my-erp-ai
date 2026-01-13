@@ -19,6 +19,8 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   switchOrg: (orgId: string) => void;
+  resetPassword: (email: string) => Promise<void>;
+  resendVerification: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,7 +36,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -96,6 +98,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const createDefaultOrganization = async (userId: string, email: string) => {
+    try {
+      const { data: org, error: orgError } = await (supabase as any)
+        .from('organizations')
+        .insert({ name: `${email.split('@')[0]}'s Organization` })
+        .select()
+        .single();
+
+      if (orgError) {
+        console.warn('Organization table not ready:', orgError);
+      } else if (org) {
+        const { error: memberError } = await (supabase as any)
+          .from('organization_members')
+          .insert({ organization_id: org.id, user_id: userId, role: 'admin' });
+        
+        if (memberError) {
+          console.warn('Membership table not ready:', memberError);
+        }
+      }
+    } catch (err) {
+      console.warn('Multi-tenant tables not ready yet:', err);
+    }
+  };
+
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
@@ -113,32 +139,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     
     if (error) throw error;
     
-    if (data.user) {
-      // Create default organization and membership
-      try {
-        const { data: org, error: orgError } = await (supabase as any)
-          .from('organizations')
-          .insert({ name: `${email.split('@')[0]}'s Organization` })
-          .select()
-          .single();
-
-        if (orgError) {
-          console.warn('Organization table not ready:', orgError);
-        } else if (org) {
-          const { error: memberError } = await (supabase as any)
-            .from('organization_members')
-            .insert({ organization_id: org.id, user_id: data.user.id, role: 'admin' });
-          
-          if (memberError) {
-            console.warn('Membership table not ready:', memberError);
-          }
-        }
-      } catch (err) {
-        console.warn('Multi-tenant tables not ready yet:', err);
-      }
+    // Check if we got a session (confirmations OFF) or not (confirmations ON)
+    if (data.session && data.user) {
+      // User is immediately logged in - confirmations are OFF
+      await createDefaultOrganization(data.user.id, email);
+      toast.success('Account created! Welcome to StratNova Hub.');
+      navigate('/');
+    } else if (data.user && !data.session) {
+      // Email confirmation is required
+      toast.info('Please check your email to confirm your account.');
+    } else {
+      // Edge case: user might already exist (Supabase returns success to prevent enumeration)
+      toast.info('If you already have an account, please sign in instead.');
     }
-    
-    toast.success('Account created! Please check your email to confirm.');
   };
 
   const signOut = async () => {
@@ -160,6 +173,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset`
+    });
+    if (error) throw error;
+    toast.success('Check your email for the password reset link.');
+  };
+
+  const resendVerification = async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email
+    });
+    if (error) throw error;
+    toast.success('Verification email resent. Please check your inbox.');
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -170,7 +200,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       signIn,
       signUp,
       signOut,
-      switchOrg
+      switchOrg,
+      resetPassword,
+      resendVerification
     }}>
       {children}
     </AuthContext.Provider>
