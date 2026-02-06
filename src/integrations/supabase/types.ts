@@ -431,24 +431,24 @@ export type Database = {
       }
       organization_members: {
         Row: {
-          org_id: string
+          organization_id: string
           role: string
           user_id: string
         }
         Insert: {
-          org_id: string
+          organization_id: string
           role?: string
           user_id: string
         }
         Update: {
-          org_id?: string
+          organization_id?: string
           role?: string
           user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "organization_members_org_id_fkey"
-            columns: ["org_id"]
+            columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
