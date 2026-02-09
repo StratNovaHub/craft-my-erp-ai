@@ -431,16 +431,22 @@ export type Database = {
       }
       organization_members: {
         Row: {
+          created_at: string | null
+          id: string | null
           organization_id: string
           role: string
           user_id: string
         }
         Insert: {
+          created_at?: string | null
+          id?: string | null
           organization_id: string
           role?: string
           user_id: string
         }
         Update: {
+          created_at?: string | null
+          id?: string | null
           organization_id?: string
           role?: string
           user_id?: string
@@ -457,14 +463,17 @@ export type Database = {
       }
       organizations: {
         Row: {
+          created_at: string | null
           id: string
           name: string | null
         }
         Insert: {
+          created_at?: string | null
           id?: string
           name?: string | null
         }
         Update: {
+          created_at?: string | null
           id?: string
           name?: string | null
         }
@@ -714,6 +723,9 @@ export type Database = {
         Args: { p_name: string; p_org_id: string; p_user_id: string }
         Returns: undefined
       }
+      current_organization_id: { Args: never; Returns: string }
+      is_org_admin: { Args: { p_organization_id: string }; Returns: boolean }
+      is_org_member: { Args: { p_organization_id: string }; Returns: boolean }
       sim_insert_customer: {
         Args: { p_id: string; p_org_id: string; p_user_id: string }
         Returns: {
